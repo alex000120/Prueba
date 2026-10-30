@@ -14,6 +14,10 @@
   --muted: #9bc0d7;
 }
 
+html, body {
+  background: #020814;
+}
+
 body {
   background:
     radial-gradient(circle at 18% 20%, rgba(87, 201, 255, 0.18), transparent 25%),
@@ -33,8 +37,8 @@ body {
 .sci-fi-backdrop .orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(28px);
-  opacity: 0.5;
+  filter: blur(26px);
+  opacity: 0.55;
   animation: drift 16s ease-in-out infinite alternate;
 }
 
@@ -81,9 +85,90 @@ body {
   opacity: 0.7;
 }
 
+.starfield {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.85) 1px, transparent 1.5px),
+    radial-gradient(circle, rgba(56,243,255,0.8) 1px, transparent 1.9px),
+    radial-gradient(circle, rgba(159,123,255,0.9) 1px, transparent 1.6px);
+  background-position: 10% 20%, 60% 32%, 78% 68%;
+  background-size: 180px 180px;
+  opacity: 0.7;
+}
+
 @keyframes drift {
   0% { transform: translate3d(0, 0, 0) scale(1); }
   100% { transform: translate3d(2vmax, -3vmax, 0) scale(1.12); }
+}
+
+.expo-header {
+  position: fixed;
+  left: 50%;
+  top: 20px;
+  width: min(88vw, 980px);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 16;
+  pointer-events: none;
+}
+
+.expo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(9, 20, 34, 0.7);
+  border: 1px solid rgba(103, 214, 255, 0.32);
+  color: var(--cyan);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-size: 10px;
+  font-weight: 800;
+  box-shadow: 0 0 18px rgba(56, 243, 255, 0.14);
+}
+
+.expo-title {
+  color: #eafcfe;
+  font-size: clamp(13px, 2vw, 18px);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 0 18px rgba(111, 211, 255, 0.2);
+}
+
+.expo-actions {
+  display: flex;
+  gap: 10px;
+  pointer-events: auto;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.scene-btn {
+  appearance: none;
+  border: 1px solid rgba(103, 214, 255, 0.3);
+  color: #ebf8ff;
+  background: rgba(7, 18, 28, 0.7);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.scene-btn:hover,
+.scene-btn:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(103, 214, 255, 0.65);
+  box-shadow: 0 0 16px rgba(56, 243, 255, 0.2);
 }
 
 #app {
@@ -201,7 +286,8 @@ body {
 
 body.low-power .sci-fi-backdrop .orb,
 body.low-power .sci-fi-backdrop .grid,
-body.low-power .sci-fi-backdrop .scan-lines {
+body.low-power .sci-fi-backdrop .scan-lines,
+body.low-power .starfield {
   opacity: 0.25;
 }
 
@@ -209,7 +295,8 @@ body.low-power #videoStage,
 body.low-power #camPiP,
 body.low-power #welcome,
 body.low-power #progreso,
-body.low-power .chip {
+body.low-power .chip,
+body.low-power .expo-header {
   box-shadow: none;
 }
 
@@ -219,8 +306,13 @@ body.low-power #welcome button,
 body.low-power #inicio button,
 body.low-power #rendimiento button,
 body.low-power #config button,
-body.low-power #juegoUI button {
+body.low-power #juegoUI button,
+body.low-power .scene-btn {
   transition: none;
+}
+
+body.low-power .scene-btn {
+  opacity: 0.9;
 }
 
 @media (max-width: 560px) {
@@ -236,6 +328,15 @@ body.low-power #juegoUI button {
     padding: 8px 7px;
   }
 
+  .expo-header {
+    top: 12px;
+  }
+
+  .expo-title {
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+
   .chip {
     padding-inline: 8px;
   }
@@ -248,4 +349,13 @@ body.low-power #juegoUI button {
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+#app::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent, rgba(56,243,255,0.04) 55%, transparent);
+  z-index: 2;
 }

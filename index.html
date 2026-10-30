@@ -1,44 +1,10 @@
 (function () {
-  const root = document.documentElement;
   const body = document.body;
   const lowPower = navigator.hardwareConcurrency <= 4 || navigator.deviceMemory <= 4 || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (lowPower) {
     body.classList.add('low-power');
   }
-
-  const accent = lowPower ? '#7de8ff' : '#6bffb2';
-  root.style.setProperty('--accent', accent);
-
-  const backdrop = document.querySelector('.sci-fi-backdrop');
-  if (backdrop) {
-    for (let i = 0; i < 22; i++) {
-      const star = document.createElement('span');
-      const size = (Math.random() * 3 + 1).toFixed(2) + 'px';
-      star.className = 'star';
-      star.style.position = 'absolute';
-      star.style.width = size;
-      star.style.height = size;
-      star.style.left = (Math.random() * 100) + '%';
-      star.style.top = (Math.random() * 100) + '%';
-      star.style.background = i % 2 ? 'rgba(92, 247, 255, 0.7)' : 'rgba(255, 255, 255, 0.8)';
-      star.style.borderRadius = '50%';
-      star.style.boxShadow = '0 0 12px rgba(92, 247, 255, 0.5)';
-      star.style.opacity = (Math.random() * 0.7 + 0.3).toFixed(2);
-      star.style.animation = 'pulse ' + (Math.random() * 3 + 2).toFixed(2) + 's ease-in-out infinite alternate';
-      backdrop.appendChild(star);
-    }
-  }
-
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes pulse {
-      0% { transform: scale(0.85); opacity: 0.35; }
-      100% { transform: scale(1.5); opacity: 1; }
-    }
-    .star { pointer-events: none; }
-  `;
-  document.head.appendChild(style);
 
   const pointerGlow = document.createElement('div');
   pointerGlow.setAttribute('aria-hidden', 'true');
@@ -53,18 +19,110 @@
   pointerGlow.style.top = '50%';
   pointerGlow.style.zIndex = '0';
   pointerGlow.style.filter = 'blur(12px)';
-  pointerGlow.style.opacity = lowPower ? '0.3' : '0.7';
+  pointerGlow.style.opacity = lowPower ? '0.25' : '0.7';
   document.body.appendChild(pointerGlow);
 
-  document.addEventListener('pointermove', (event) => {
-    if (lowPower) return;
-    pointerGlow.style.left = event.clientX + 'px';
-    pointerGlow.style.top = event.clientY + 'px';
-  }, { passive: true });
-
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    body.classList.add('low-power');
+  if (!lowPower) {
+    document.addEventListener('pointermove', (event) => {
+      pointerGlow.style.left = event.clientX + 'px';
+      pointerGlow.style.top = event.clientY + 'px';
+    }, { passive: true });
   }
+
+  const createInteractiveScene = (sceneName) => {
+    const stage = document.getElementById('videoStage');
+    if (!stage) return;
+
+    stage.classList.remove('pulse-scene', 'arena-scene', 'luz-scene');
+    stage.classList.add(sceneName + '-scene');
+
+    const sceneLabel = {
+      pulse: 'PULSAR · energía gestual',
+      arena: 'ARENA · reacción rápida',
+      luz: 'LUZ · creatividad en movimiento'
+    };
+
+    const msg = document.getElementById('mensajeVideo');
+    if (msg) msg.textContent = sceneLabel[sceneName] || 'Muestra una seña con AMBAS manos frente a la cámara';
+  };
+
+  document.querySelectorAll('.scene-btn').forEach((button) => {
+    button.addEventListener('click', () => createInteractiveScene(button.dataset.scene));
+  });
+
+  document.addEventListener('keydown', (event) => {
+    const map = { 1: 'pulse', 2: 'arena', 3: 'luz' };
+    if (map[event.key]) createInteractiveScene(map[event.key]);
+  });
+
+  const styles = document.createElement('style');
+  styles.textContent = `
+    .pulse-scene #mensajeVideo {
+      background: radial-gradient(circle, rgba(56,243,255,0.18), rgba(15,31,45,0.8) 60%);
+      color: #dffcff;
+      text-shadow: 0 0 16px rgba(56,243,255,0.7);
+    }
+    .arena-scene #mensajeVideo {
+      background: radial-gradient(circle, rgba(255,95,191,0.12), rgba(20,10,25,0.78) 60%);
+      color: #ffe6f5;
+      text-shadow: 0 0 18px rgba(255,95,191,0.65);
+    }
+    .luz-scene #mensajeVideo {
+      background: radial-gradient(circle, rgba(107,255,178,0.14), rgba(9,24,28,0.82) 60%);
+      color: #ebfff7;
+      text-shadow: 0 0 16px rgba(107,255,178,0.7);
+    }
+    .pulse-scene #videoStage::before,
+    .arena-scene #videoStage::before,
+    .luz-scene #videoStage::before {
+      box-shadow: 0 0 28px rgba(56,243,255,0.2), inset 0 0 28px rgba(255,255,255,0.04);
+    }
+    .pulse-scene #videoStage {
+      box-shadow: 0 0 30px rgba(56,243,255,0.2), inset 0 0 50px rgba(56,243,255,0.12);
+    }
+    .arena-scene #videoStage {
+      box-shadow: 0 0 30px rgba(255,95,191,0.18), inset 0 0 50px rgba(255,95,191,0.08);
+    }
+    .luz-scene #videoStage {
+      box-shadow: 0 0 30px rgba(107,255,178,0.18), inset 0 0 50px rgba(107,255,178,0.08);
+    }
+    .star {
+      position: absolute;
+      display: block;
+      pointer-events: none;
+    }
+  `;
+  document.head.appendChild(styles);
+
+  const starfield = document.querySelector('.starfield');
+  if (starfield && !lowPower) {
+    for (let i = 0; i < 40; i++) {
+      const star = document.createElement('span');
+      star.className = 'star';
+      const size = (Math.random() * 2.8 + 1.2) + 'px';
+      const left = (Math.random() * 100) + '%';
+      const top = (Math.random() * 100) + '%';
+      star.style.width = size;
+      star.style.height = size;
+      star.style.left = left;
+      star.style.top = top;
+      star.style.background = i % 2 === 0 ? 'rgba(255,255,255,0.9)' : 'rgba(56,243,255,0.9)';
+      star.style.borderRadius = '50%';
+      star.style.boxShadow = '0 0 12px rgba(56,243,255,0.56)';
+      star.style.opacity = (Math.random() * 0.9 + 0.3).toFixed(2);
+      star.style.animation = 'pulse ' + (Math.random() * 3 + 2).toFixed(2) + 's ease-in-out infinite alternate';
+      starfield.appendChild(star);
+    }
+  }
+
+  const pulseKeyframes = document.createElement('style');
+  pulseKeyframes.textContent = `
+    @keyframes pulse {
+      0% { transform: scale(0.78); opacity: 0.32; }
+      100% { transform: scale(1.4); opacity: 1; }
+    }
+  `;
+  document.head.appendChild(pulseKeyframes);
 })();
 
 window.addEventListener('load', () => {
@@ -74,4 +132,34 @@ window.addEventListener('load', () => {
 
 if (!window.__creativeBoostApplied) {
   window.__creativeBoostApplied = true;
+}
+
+window.__expoScenes = {
+  pulse: 'pulse',
+  arena: 'arena',
+  luz: 'luz'
+};
+
+const ring = document.querySelector('.expo-header');
+if (ring) ring.style.transform = 'translateX(-50%)';
+
+const dance = () => {
+  document.body.classList.add('gesture-showcase');
+  setTimeout(() => document.body.classList.remove('gesture-showcase'), 400);
+};
+window.addEventListener('pointerdown', dance, { passive: true });
+
+if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  document.body.classList.add('low-power');
+}
+
+window.addEventListener('keydown', (event) => {
+  if (event.key === 'g' || event.key === 'G') {
+    const v = document.getElementById('videoStage');
+    if (v) v.classList.toggle('pulse-scene');
+  }
+});
+
+if (navigator.userAgent.includes('Mobile')) {
+  document.body.classList.add('mobile-showcase');
 }

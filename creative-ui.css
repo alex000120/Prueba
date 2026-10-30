@@ -18,10 +18,20 @@
     <div class="orb orb-b"></div>
     <div class="grid"></div>
     <div class="scan-lines"></div>
+    <div class="starfield"></div>
+  </div>
+
+  <div class="expo-header">
+    <div class="expo-badge">EXHIBICIÓN · IA GESTUAL</div>
+    <div class="expo-title">Laboratorio de manos + realidad holográfica</div>
+    <div class="expo-actions">
+      <button data-scene="pulse" class="scene-btn">Pulsar</button>
+      <button data-scene="arena" class="scene-btn">Arena</button>
+      <button data-scene="luz" class="scene-btn">Luz</button>
+    </div>
   </div>
 
   <div id="app">
-
     <div id="videoStage">
       <video id="video" class="vid" playsinline loop muted></video>
       <video id="video2" class="vid" playsinline loop muted></video>
@@ -35,7 +45,7 @@
     <div id="welcome" class="oculto">
       <div class="boot">SISTEMA EN LÍNEA</div>
       <h1>¿Con qué empezamos, <span>Alex</span>?</h1>
-      <div class="sub">Haz una seña con AMBAS manos, toca una opción… o ¡revienta burbujas! 🫧</div>
+      <div class="sub">Haz una seña con AMBAS manos, toca una opción… o activa una experiencia interactiva. 🧠✨</div>
       <div class="gestos-grid">
         <div role="button" tabindex="0" data-video="0"><span class="emoji">☝️☝️</span><div><span class="label">Video 1</span><span class="hint">1 dedo (2 manos)</span></div></div>
         <div role="button" tabindex="0" data-video="1"><span class="emoji">✌️✌️</span><div><span class="label">Video 2</span><span class="hint">2 dedos (2 manos)</span></div></div>
